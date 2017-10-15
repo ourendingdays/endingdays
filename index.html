@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Our Ending Days</title>
+	<meta name="description" content="Do you know when we will all perish?">
+	<meta name="author" content="Pavlo Mospan" />
+
+	<link rel="icon" href="img/favicon-star-blue.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="img/favicon-star-blue.ico" type="image/x-icon">
+
+	<link rel="stylesheet" href="css/foundation.css">
+	<link rel="stylesheet" href="css/font-awesome.min.css">
+	<link rel="stylesheet" media="screen" href="css/style.css">
+</head>
+
+<body onload="onNextButtonClicked()">
+
+	<!-- particles.js container -->
+	<div id="particles-js"></div>
+
+	<!-- page container -->
+	<div id="page-wrapper">
+
+
+		<!--class grid-container-fluid is JUST THE VERY SAME, as class full 
+       class grid-container-padded makes paddings on the left and right even on the smallest devices, so content doesn't touch the screen - here I do not neen it-->
+		<div class="grid-container">
+			<div class="grid-y" id="height-id">
+				<div class="cell small-1 medium-1 large-1">
+				</div>
+				<div class="cell auto">
+					<h1>Our Ending Days</h1>
+					<h2 id="clock">00:00:00</h2>
+					<div class="warning progress" role="progressbar" tabindex="0" aria-valuenow="25" aria-valuemin="0" aria-valuetext="25 percent" aria-valuemax="100">
+						<div class="progress-meter" id="progress-meter">
+							<p class="progress-meter-text"></p>
+						</div>
+
+					</div>
+					<p id="progress-meter-p-color">time from previous End of the World to the next</p>
+				</div>
+
+				<div class="cell shrink">
+					<div id="ending-description">
+						<p id="p-author"></p>
+						<p id="p-description"></p>
+					</div>
+					<div id="control-buttons">
+						<a class="button" id="last-button" onclick="onLastButtonClicked()">last Armageddon</a>
+						<a class="button" id="next-button" onclick="onNextButtonClicked()">next Apocalypse</a>
+					</div>
+				</div>
+
+				<div class="cell shrink" style="margin-bottom: 5px">
+					<div class="grid-x grid-margin-x align-justify">
+						<div class="cell shrink">Paul Mospan &copy; 2017</div>
+						<div class="cell shrink">
+							<a href="https://github.com/sachsene" target="_blank"><i class="fa fa-github" aria-hidden="true" title="My Github Page"></i></a>
+							
+							<a href="https://www.facebook.com/paul.mospan" target="_blank" title="My Facebook Page"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+							
+							<a title="Contact Me"><i class="fa fa-envelope-o call-modal" aria-hidden="true" id="contact-me"></i></a>
+							
+							<a href="#" title="My site (coming soon)"><i class="fa fa-briefcase" aria-hidden="true"></i></a>
+							
+							<div id="my-modal" class="modal">
+								<div class="modal-inner">
+									<div class="close">&times;</div>
+									<div id="form-outer">
+										Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt quisquam, culpa pariatur minima mollitia quae perspiciatis repudiandae omnis explicabo vero, fuga consequatur delectus. In ut architecto, consequatur tempore facere explicabo deleniti dolor repellendus asperiores, odit sunt voluptas dolorem, impedit praesentium!
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- scripts for particles-->
+	<script src="particles.js"></script>
+	<script src="js/app.js"></script>
+
+	<!-- scripts for everything else-->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="js/vendor/jquery.js"></script>
+	<script src="js/vendor/foundation.min.js"></script>
+	<script src="js/main.js"></script>
+</body>
+
+</html>
