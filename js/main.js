@@ -4,6 +4,17 @@ jQuery(document).ready(function () {
 	particlesJS.load('particles-js', '/js/particles.json', function () {
 		console.log('callback - particles.js config loaded');
 	});
+	
+	$("#form").submit(function(){
+		$.ajax({
+			type: "POST",
+			url: "mail.php",
+			data: $(this).serialize()
+		}).done(function(){
+		document.getElementById('greeting').textContent = 'Thank you! I will get in touch with you soon';
+		});
+		return false;
+	});
 
 });
 
