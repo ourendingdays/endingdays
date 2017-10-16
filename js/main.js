@@ -19,7 +19,7 @@ getWindowHeight();
 
 var modalWindow = document.getElementById('my-modal');
 var button = document.getElementById('contact-me');
-var inline = document.getElementsByClassName('close')[0];
+var inline = document.getElementById('close');
 
 button.onclick = function() {
 	modalWindow.style.display = 'block';

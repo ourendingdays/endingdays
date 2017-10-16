@@ -31,8 +31,7 @@
        class grid-container-padded makes paddings on the left and right even on the smallest devices, so content doesn't touch the screen - here I do not neen it-->
 		<div class="grid-container">
 			<div class="grid-y" id="height-id">
-				<div class="cell small-1 medium-1 large-1">
-				</div>
+				<div class="cell small-1 medium-1 large-1"></div>
 				<div class="cell auto">
 					<h1>Our Ending Days</h1>
 					<h2 id="clock">00:00:00</h2>
@@ -61,22 +60,42 @@
 						<div class="cell shrink">Paul Mospan &copy; 2017</div>
 						<div class="cell shrink">
 							<a href="https://github.com/sachsene" target="_blank"><i class="fa fa-github" aria-hidden="true" title="My Github Page"></i></a>
-							
+
 							<a href="https://www.facebook.com/paul.mospan" target="_blank" title="My Facebook Page"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-							
+
 							<a title="Contact Me"><i class="fa fa-envelope-o call-modal" aria-hidden="true" id="contact-me"></i></a>
-							
+
 							<a href="#" title="My site (coming soon)"><i class="fa fa-briefcase" aria-hidden="true"></i></a>
-							
+
 							<div id="my-modal" class="modal">
+
 								<div class="modal-inner">
-									<div class="close">&times;</div>
-									<div id="form-outer">
-										Lorem ipsum dolor sit amet, consectetur adipisicing elit. Incidunt quisquam, culpa pariatur minima mollitia quae perspiciatis repudiandae omnis explicabo vero, fuga consequatur delectus. In ut architecto, consequatur tempore facere explicabo deleniti dolor repellendus asperiores, odit sunt voluptas dolorem, impedit praesentium!
+									<div class="wrapper">
+										<div id="close">&times;</div>
+										<form>
+											<h3>Hello! My name is Paul and I will be glad to hear from you</h3>
+											<label>Your name
+    											<input type="text" placeholder="John Doe" aria-describedby="helpText1">
+  											</label>
+											<p class="help-text" id="helpText1">Ex. : John Doe</p>
+											
+											<label>Your email / skype / facebook
+    											<input type="email" placeholder="john.doe@yahoo.com" aria-describedby="helpText2">
+  											</label>
+											<p class="help-text" id="helpText2">Ex. : john.doe@yahoo.com</p>
+											
+											<label>
+												What is the reason of your interest?
+												<textarea placeholder="Cooperation"></textarea>
+											</label>
+											
+											<input type="submit" class="button" value="Submit">
+										</form>
 									</div>
 								</div>
+
 							</div>
-							
+
 						</div>
 					</div>
 				</div>
