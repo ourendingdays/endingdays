@@ -132,68 +132,48 @@ var armageddonHours; var armageddonMinutes; var armageddonSeconds0;
 
 //automatically counts how much left
 function getTimeLeftAuto() {
-
-	var today = new Date();
-
-	//Year, Month, Date, Hours, Minutes, Seconds of TODAY
-	var todayYear = today.getUTCFullYear();
-	var todayMonth = today.getUTCMonth();
-	var todayDate = today.getUTCDate();
-	var todayHours = today.getUTCHours();
-	var todayMinutes = today.getUTCMinutes();
-	var todaySeconds = today.getUTCSeconds();
-
-	//armageddons with Date object are just 12, so for the rest 10 of them I need a new functionality
+	const today = new Date();
+	
+	// Determining target date similar to above
+	let targetDate;
 	if (NON_DATE_ARMAGEDDON) {
-		//chosenArmageddonAuto has JUST YEAR. Month = 11 ( January = 0, December = 11), Date = 31, Hours = 22 (UTC BUG), Minutes = 00, Seconds = 00
-		armageddonYear = chosenArmageddonAuto;
-		armageddonMonth = 11;
-		armageddonDate = 31;
-		armageddonHours = 22;
-		armageddonMinutes = 00;
-		armageddonSeconds = 00;
+	  targetDate = new Date(chosenArmageddonAuto, 11, 31, 22, 0, 0);
 	} else {
-		//Year, Month, Date, Hours, Minutes, Seconds of ARMAGEDDON
-		armageddonYear = chosenArmageddonAuto.getUTCFullYear();
-		armageddonMonth = chosenArmageddonAuto.getUTCMonth();
-		armageddonDate = chosenArmageddonAuto.getUTCDate();
-		//This I don't even need to find, because hours, minutes and seconds are default = 24h, 00m, 00s. But you need to remember, that 00m and 00s are actually 60m and 60s
-		armageddonHours = chosenArmageddonAuto.getUTCHours();
-		armageddonMinutes = chosenArmageddonAuto.getUTCMinutes();
-		armageddonSeconds = chosenArmageddonAuto.getUTCSeconds();
+	  targetDate = chosenArmageddonAuto;
 	}
-	var leftYear = armageddonYear - todayYear;
-	var leftMonth = armageddonMonth - todayMonth;
-	var leftDate = armageddonDate - todayDate;
-	var leftHours = Math.abs(armageddonHours - todayHours);
-	var leftMinutes = 59 - todayMinutes;
-	var leftSeconds = 59 - todaySeconds;
-
-	if (leftHours.toString().length < 2) {
-		leftHours = '0' + leftHours;
-	}
-	if (leftMinutes.toString().length < 2) {
-		leftMinutes = '0' + leftMinutes;
-	}
-	if (leftSeconds.toString().length < 2) {
-		leftSeconds = '0' + leftSeconds;
-	}
-
-	timeLeftOutput(leftYear, leftMonth, leftDate, leftHours, leftMinutes, leftSeconds);
-
-	var space = getProgressTime(today);
-	space +='%';
-
-	var colorCurrrent = '#' + leftHours + leftMinutes + leftSeconds;
-	PROGRESS.style.background = colorCurrrent;
-	PROGRESS.style.width = space;
-	TEXT_COLOR.textContent = TEXT_COLOR_TEXT + space;
-	TEXT_COLOR.style.color = colorCurrrent;
-
+	
+	const diffMs = targetDate - today;
+	// Calculating days, hours, minutes, seconds directly from ms difference.
+	const diffSeconds = Math.floor(diffMs / 1000) % 60;
+	const diffMinutes = Math.floor(diffMs / (1000 * 60)) % 60;
+	const diffHours   = Math.floor(diffMs / (1000 * 60 * 60)) % 24;
+	const diffDays    = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+	
+	// Padding numbers to two digits
+	const formattedHours = String(diffHours).padStart(2, '0');
+	const formattedMinutes = String(diffMinutes).padStart(2, '0');
+	const formattedSeconds = String(diffSeconds).padStart(2, '0');
+	
+	// Constructing a more human-readable string.
+	CLOCK.textContent = `${diffDays} days ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+	
+	// Computing progress
+	const progressPercent = getProgressTime(today);
+	const progressWidth = progressPercent + '%';
+	
+	// Creating a dynamic color from the time parts (this is just a quirky idea)
+	const colorCurrent = '#' + formattedHours + formattedMinutes + formattedSeconds;
+	
+	// Applying the computed values
+	PROGRESS.style.width = progressWidth;
+	PROGRESS.style.background = colorCurrent;
+	TEXT_COLOR.textContent = TEXT_COLOR_TEXT + progressWidth;
+	TEXT_COLOR.style.color = colorCurrent;
+	
 	AUTHOR.textContent = chosenDescriptionAuto[0];
 	DESCRIPTION.textContent = chosenDescriptionAuto[1];
-
-}
+  }
+  
 getTimeLeftAuto();
 setInterval(getTimeLeftAuto, 1000);
 
@@ -221,47 +201,25 @@ function timeLeftOutput(leftYear, leftMonth, leftDate, leftHours, leftMinutes, l
 }
 
 //function for progress-meter. Compares last Arm with the one to come and with TODAY
-function getProgressTime(today_P) {
-	//current armagedon (chosenArmageddonAuto) I have from function getTimeLeftAuto
+function getProgressTime(today) {
+	// Determining target (next Armageddon) date, converting to a Date if we use a numeric year.
+	let targetDate;
+	if (NON_DATE_ARMAGEDDON) {
+	  // If chosenArmageddonAuto is a year, define the target date (using December 31, 22:00 UTC as before).
+	  targetDate = new Date(chosenArmageddonAuto, 11, 31, 22, 0, 0);
+	} else {
+	  targetDate = chosenArmageddonAuto;
+	}
 	
-	var todayYear = today_P.getUTCFullYear();
-	var todayMonth = today_P.getUTCMonth();
-	var todayDate = today_P.getUTCDate();
-	var todayHours = today_P.getUTCHours();
-	var todayMinutes = today_P.getUTCMinutes();
-	var todaySeconds = today_P.getUTCSeconds();
+	const totalDuration = targetDate.getTime() - LAST_ARMAGEDDON.getTime();
+	const elapsedDuration = today.getTime() - LAST_ARMAGEDDON.getTime();
+	// Calculating progress percentage and capping it at 100%
+	const progressPercent = Math.min(100, (elapsedDuration / totalDuration) * 100);
 	
-	var lastArmageddonYear = LAST_ARMAGEDDON.getUTCFullYear();
-	var lastArmageddonMonth = LAST_ARMAGEDDON.getUTCMonth();
-	var lastArmageddonDate = LAST_ARMAGEDDON.getUTCDate();
-	var lastArmageddonHours = LAST_ARMAGEDDON.getUTCHours();
-	var lastArmageddonMinutes = LAST_ARMAGEDDON.getUTCMinutes();
-	var lastArmageddonSeconds = LAST_ARMAGEDDON.getUTCSeconds();
-	
-	//Getting Progress between Last and Today
-	var LTYear = todayYear - lastArmageddonYear;
-	var LTMonth = todayMonth - lastArmageddonMonth;
-	var LTDate = todayDate - lastArmageddonDate;
-	var LTHours = todayHours - lastArmageddonHours;
-	var LTMinutes = todayMinutes - lastArmageddonMinutes;
-	var LTSeconds = todaySeconds - lastArmageddonSeconds;
-	
-	var LFYear = armageddonYear - lastArmageddonYear;
-	var LFMonth = armageddonMonth - lastArmageddonMonth;
-	var LFDate = armageddonDate - lastArmageddonDate;
-	var LFHours = 0;
-	var LFMinutes = 0;
-	var LFSeconds = 0;
-	
-	var progressLT_Seconds = LTSeconds + (LTMinutes * 60) + (LTHours * 60 * 60) + (LTDate * 24 * 60 * 60) + (LTMonth * 24 * 60 * 60 * 30) + (LTYear * 24 * 60 * 60 * 30 * 365);
-	var progressLF_Seconds = (LFYear * 24 * 60 * 60 * 30 * 365) + (LFMonth * 24 * 60 * 60 * 30) + (LTDate * 24 * 60 * 60);
-	
-	var progressWidth = (progressLT_Seconds * 100)/progressLF_Seconds * 100;
-	
-	var progressWidthMin = progressWidth.toFixed(4);
-	
-	return progressWidthMin;
-}
+	// Returning progress percentage as a formatted string
+	return progressPercent.toFixed(2);  
+  }
+  
 
 function onNextButtonClicked() {
 	whichArmaggedon++;
