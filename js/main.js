@@ -72,7 +72,7 @@ var armageddon2892 = new Date(2892, 11, 31, 24, 00, 00);
 var armageddon3797 = new Date(3797, 11, 31, 24, 00, 00);
 var armageddon5079 = new Date(5079, 11, 31, 24, 00, 00);
 
-////////More then 5 charecters Date does not allow, so year 300 000 cannot be written in Date object
+////////More then 5 characters Date does not allow, so year 300 000 cannot be written in Date object
 var armageddon3TY = 300000;
 var armageddon5TY = 500000;
 var armageddon1M = 1000000;
