@@ -16,7 +16,61 @@ jQuery(document).ready(function () {
 		return false;
 	});
 
+	setInitialArmageddon();
+
+	getTimeLeftAuto();
+  	setInterval(getTimeLeftAuto, 1000)
 });
+
+/**
+ * Picks the next future event and the immediate previous one as LAST_ARMAGEDDON.
+ *
+ * @returns {void}
+ */
+function setInitialArmageddon() {
+	const today = new Date();
+  
+	for (let i = 0; i < armageddons.length; i++) {
+	  // Determine the Date object for this event
+	  const ev = armageddons[i];
+	  const evDate = (ev instanceof Date)
+		? ev
+		: new Date(ev, 11, 31, 22, 0, 0);
+  
+	  if (today < evDate) {
+		// the next event is at index i
+		
+		// 1) set whichArmaggedon to i
+		whichArmaggedon = i;
+		
+		// 2) set NON_DATE_ARMAGEDDON if ev was a numeric year
+		NON_DATE_ARMAGEDDON = !(ev instanceof Date);
+  
+		// 3) set LAST_ARMAGEDDON to the previous event's date,
+		//    or fall back to today if there's no previous.
+		if (i > 0) {
+		  const prev = armageddons[i - 1];
+		  LAST_ARMAGEDDON = (prev instanceof Date)
+			? prev
+			: new Date(prev, 11, 31, 22, 0, 0);
+		} else {
+		  // no past event, just use today as the baseline
+		  LAST_ARMAGEDDON = today;
+		}
+  
+		// 4) finally update the UI with the next event
+		worldEndingCounter(ev, descriptions[i]);
+		return;
+	  }
+	}
+  
+	// If we get here, there's no future event: fallback
+	whichArmaggedon = 0;
+	NON_DATE_ARMAGEDDON = false;
+	LAST_ARMAGEDDON = today;
+	worldEndingCounter(armageddons[0], descriptions[0]);
+  }
+  
 
 /**
  * Sets the height of the grid element to match the client window's height.
@@ -54,7 +108,7 @@ window.onclick = function(event) {
 var CLOCK = document.getElementById('clock');
 var PROGRESS = document.getElementById('progress-meter');
 var TEXT_COLOR = document.getElementById('progress-meter-p-color');
-var TEXT_COLOR_TEXT = 'time from previous End of the World to the next : ';
+var TEXT_COLOR_TEXT = 'Percentage of time from previous End of the World to the next : ';
 var AUTHOR = document.getElementById('p-author');
 var DESCRIPTION = document.getElementById('p-description');
 
@@ -63,8 +117,8 @@ var whichArmaggedon = -1;
 var chosenArmageddonAuto = armageddons[0];
 var NON_DATE_ARMAGEDDON = false;
 
-//last world anding to make a progress on page load
-var LAST_ARMAGEDDON = new Date(2017, 08, 23, 24, 00, 00);
+//last world ending to make a progress on page load
+var LAST_ARMAGEDDON;
 
 var chosenDescriptionAuto = descriptions[0];
 
@@ -86,7 +140,6 @@ var armageddonHours; var armageddonMinutes; var armageddonSeconds0;
 /**
  * Automatically counts how much time is left
  */
-
 function getTimeLeftAuto() {
 	const today = new Date();
 	
