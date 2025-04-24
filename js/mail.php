@@ -1,12 +1,23 @@
 <?php
+// Loading environment variables
+require_once __DIR__ . '/env.php';
 
-$recepient = "pavel.mospan@yahoo.com";
-$sitename = "Our Ending Days";
+$recipient = getenv('RECIPIENT_EMAIL');
+$sitename  = getenv('SITE_NAME');
 
-$name = trim($_POST["name"]);
-$email = trim($_POST["email"]);
-$email = trim($_POST["reason"]);
-$message = "Name: $name \nHow to get in touch: $email \nWhat is up: $email";
+$name      = trim($_POST['name']   ?? '');
+$userEmail = trim($_POST['email']  ?? '');
+$reason    = trim($_POST['reason'] ?? '');
 
-$pagetitle = "Message from the Website \"$sitename\"";
-mail($recepient, $pagetitle, $message, "Content-type: text/plain; charset=\"utf-8\"\n From: $recepient");
+$message = <<<EOD
+Name: {$name}
+Contact: {$userEmail}
+Reason : {$reason}
+EOD;
+
+$subject = "Message from \"{$sitename}\"";
+$headers = "Content-Type: text/plain; charset=UTF-8\r\n"
+         . "From: {$recipient}\r\n";
+
+// Sending the email
+mail($recipient, $subject, $message, $headers);
