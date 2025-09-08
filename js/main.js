@@ -1,7 +1,7 @@
 jQuery(document).ready(function () {
 
 	/* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
-	particlesJS.load('particles-js', '/js/particles.json', function () {
+	particlesJS.load('particles-js', 'js/particles.json', function () {
 		console.log('callback - particles.js config loaded');
 	});
 	
@@ -182,9 +182,6 @@ function getTimeLeftAuto() {
 	AUTHOR.textContent = chosenDescriptionAuto[0];
 	DESCRIPTION.textContent = chosenDescriptionAuto[1];
   }
-  
-getTimeLeftAuto();
-setInterval(getTimeLeftAuto, 1000);
 
 function timeLeftOutput(leftYear, leftMonth, leftDate, leftHours, leftMinutes, leftSeconds) {
 	var answerTimeLeft = '';
