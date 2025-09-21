@@ -1,5 +1,5 @@
 (function initParticles() {
-  const jsonPath = 'assets/particles/particles-test.json?v=1';
+  const jsonPath = 'assets/particles/particles-old.json?v=1';
 
   // If something initialized earlier, destroy it cleanly.
   if (window.pJSDom && pJSDom.length) {
