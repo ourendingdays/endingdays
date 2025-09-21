@@ -3,7 +3,7 @@ html,
 body {
 	width: 100%;
 	height: 100%;
-	background: #111;
+	background: transparent; 
 }
 
 html {
@@ -59,17 +59,15 @@ canvas {
 	background-repeat: no-repeat;
 }
 
-/* ---- particles.js container ---- */
-
 /* -------- PAGE -------- */
 
 #page-wrapper {
 	width: 80%;
 	margin: 0 auto;
 	position: relative;
-	z-index: 2;
+	z-index: 1;
 	font-family: 'PT Serif', serif;
-	background-color: rgba(0, 0, 0, 0);
+	background: transparent;
 }
 
 #clock {
@@ -249,4 +247,12 @@ form textarea {
 	#ending-description #p-description {
 		line-height: 1.2em;
 	}
+}
+
+/* ---- particles.js container ---- */
+ #particles-js {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	background: #0b0e13; /* optional backdrop */
 }

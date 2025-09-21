@@ -1,9 +1,29 @@
-jQuery(document).ready(function () {
+(function initParticles() {
+  const jsonPath = 'assets/particles/particles-test.json?v=1';
 
-	/* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
-	particlesJS.load('particles-js', '/js/particles.json', function () {
-		console.log('callback - particles.js config loaded');
-	});
+  // If something initialized earlier, destroy it cleanly.
+  if (window.pJSDom && pJSDom.length) {
+    try { pJSDom[0].pJS.fn.vendors.destroypJS(); } catch (e) { /* noop */ }
+  }
+
+  if (!window.particlesJS) {
+    console.error('particlesJS missing — check js/particles.min.js is loaded before main.js');
+    return;
+  }
+
+  particlesJS.load('particles-js', jsonPath, () => {
+    console.log('callback - particles.js config loaded');
+    // Optional: verify the active config
+    const inst = pJSDom && pJSDom[0] && pJSDom[0].pJS;
+    if (inst) {
+      console.log('shape:', inst.particles.shape.type,
+                  'lines:', inst.particles.line_linked.enable);
+    }
+  });
+})();
+
+
+jQuery(document).ready(function () {
 	
 	$("#form").submit(function(){
 		$.ajax({
@@ -141,47 +161,43 @@ var armageddonHours; var armageddonMinutes; var armageddonSeconds0;
  * Automatically counts how much time is left
  */
 function getTimeLeftAuto() {
-	const today = new Date();
-	
-	// Determining target date similar to above
-	let targetDate;
-	if (NON_DATE_ARMAGEDDON) {
-	  targetDate = new Date(chosenArmageddonAuto, 11, 31, 22, 0, 0);
-	} else {
-	  targetDate = chosenArmageddonAuto;
-	}
-	
-	const diffMs = targetDate - today;
-	// Calculating days, hours, minutes, seconds directly from ms difference.
-	const diffSeconds = Math.floor(diffMs / 1000) % 60;
-	const diffMinutes = Math.floor(diffMs / (1000 * 60)) % 60;
-	const diffHours   = Math.floor(diffMs / (1000 * 60 * 60)) % 24;
-	const diffDays    = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-	
-	// Padding numbers to two digits
-	const formattedHours = String(diffHours).padStart(2, '0');
-	const formattedMinutes = String(diffMinutes).padStart(2, '0');
-	const formattedSeconds = String(diffSeconds).padStart(2, '0');
-	
-	// Constructing a more human-readable string.
-	CLOCK.textContent = `${diffDays} days ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
-	
-	// Computing progress
-	const progressPercent = getProgressTime(today);
-	const progressWidth = progressPercent + '%';
-	
-	// Creating a dynamic color from the time parts (this is just a quirky idea)
-	const colorCurrent = '#' + formattedHours + formattedMinutes + formattedSeconds;
-	
-	// Applying the computed values
-	PROGRESS.style.width = progressWidth;
-	PROGRESS.style.background = colorCurrent;
-	TEXT_COLOR.textContent = TEXT_COLOR_TEXT + progressWidth;
-	TEXT_COLOR.style.color = colorCurrent;
-	
-	AUTHOR.textContent = chosenDescriptionAuto[0];
-	DESCRIPTION.textContent = chosenDescriptionAuto[1];
+  const today = new Date();
+
+  let targetDate;
+  if (NON_DATE_ARMAGEDDON) {
+    targetDate = new Date(chosenArmageddonAuto, 11, 31, 22, 0, 0);
+  } else {
+    targetDate = chosenArmageddonAuto;
   }
+
+  const diffMs = targetDate - today;
+  const diffSeconds = Math.floor(diffMs / 1000) % 60;
+  const diffMinutes = Math.floor(diffMs / (1000 * 60)) % 60;
+  const diffHours   = Math.floor(diffMs / (1000 * 60 * 60)) % 24;
+  const diffDays    = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  const formattedHours   = String(diffHours).padStart(2, '0');
+  const formattedMinutes = String(diffMinutes).padStart(2, '0');
+  const formattedSeconds = String(diffSeconds).padStart(2, '0');
+
+  CLOCK.textContent = `${diffDays} days ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+
+  // ✅ compute progress correctly
+  const { progress } = getProgressTime(LAST_ARMAGEDDON, targetDate);
+  const progressPercent = Math.max(0, Math.min(100, Math.round(progress * 100)));
+  const progressWidth = progressPercent + '%';
+
+  const colorCurrent = '#' + formattedHours + formattedMinutes + formattedSeconds;
+
+  PROGRESS.style.width = progressWidth;
+  PROGRESS.style.background = colorCurrent;
+  TEXT_COLOR.textContent = TEXT_COLOR_TEXT + progressWidth;
+  TEXT_COLOR.style.color = colorCurrent;
+
+  AUTHOR.textContent = chosenDescriptionAuto[0];
+  DESCRIPTION.textContent = chosenDescriptionAuto[1];
+}
+
   
 getTimeLeftAuto();
 setInterval(getTimeLeftAuto, 1000);
@@ -217,25 +233,24 @@ function timeLeftOutput(leftYear, leftMonth, leftDate, leftHours, leftMinutes, l
  * 
  * @returns {string} The Progressbar percentage
  */
-function getProgressTime(today) {
+function getProgressTime(prev, next) {
+  const prevDate = prev ? new Date(prev.date || prev) : null;
+  const nextDate = next ? new Date(next.date || next) : null;
 
-	// Determining target (next Armageddon) date, converting to a Date if we use a numeric year.
-	let targetDate;
-	if (NON_DATE_ARMAGEDDON) {
-	  // If chosenArmageddonAuto is a year, define the target date (using December 31, 22:00 UTC as before).
-	  targetDate = new Date(chosenArmageddonAuto, 11, 31, 22, 0, 0);
-	} else {
-	  targetDate = chosenArmageddonAuto;
-	}
-	
-	const totalDuration = targetDate.getTime() - LAST_ARMAGEDDON.getTime();
-	const elapsedDuration = today.getTime() - LAST_ARMAGEDDON.getTime();
-	// Calculating progress percentage and capping it at 100%
-	const progressPercent = Math.min(100, (elapsedDuration / totalDuration) * 100);
-	
-	// Returning progress percentage as a formatted string
-	return progressPercent.toFixed(2);  
+  if (!prevDate || isNaN(prevDate) || !nextDate || isNaN(nextDate)) {
+    console.warn('getProgressTime: missing/invalid dates', { prev, next });
+    return { elapsed: 0, total: 1, progress: 0 };
   }
+
+  const now = Date.now();
+  const start = prevDate.getTime();
+  const end   = nextDate.getTime();
+  const elapsed = Math.max(0, now - start);
+  const total   = Math.max(1, end - start);
+  return { elapsed, total, progress: elapsed / total };
+}
+
+
   
 /**
  * Activates when the "Next" button is clicked.

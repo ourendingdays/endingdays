@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,20 +12,19 @@
 	<link rel="icon" href="img/favicon-star-blue.ico" type="image/x-icon">
 	<link rel="shortcut icon" href="img/favicon-star-blue.ico" type="image/x-icon">
 
-	<link rel="stylesheet" href="css/foundation.css">
-	<link rel="stylesheet" href="css/font-awesome.min.css">
-	<link rel="stylesheet" media="screen" href="css/style.css">
+	<link rel="stylesheet" href="assets/css/foundation.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" media="screen" href="assets/css/style.css">
+	
 </head>
 
 <body onload="onNextButtonClicked()">
 
 	<!-- particles.js container -->
-	<div id="particles-js"></div>
+  	<div id="particles-js"></div>
 
 	<!-- page container -->
 	<div id="page-wrapper">
-
-
 		<!--class grid-container-fluid is JUST THE VERY SAME, as class full 
        class grid-container-padded makes paddings on the left and right even on the smallest devices, so content doesn't touch the screen - here I do not neen it-->
 		<div class="grid-container">
@@ -103,10 +101,11 @@
 		</div>
 	</div>
 
+	<!-- particles.min.js as the local library (no defer to avoid any race with init) -->
+	<script src="js/particles.min.js"></script>
 
-	<!-- scripts for particles-->
-	<script src="particles.js"></script>
-	<script src="js/app.js"></script>
+	<!-- initializing particles from JSON + tiny diagnostics -->
+
 
 	<!-- utils script-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
