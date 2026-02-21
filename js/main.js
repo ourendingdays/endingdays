@@ -107,6 +107,7 @@ function getWindowHeight() {
     console.log('height of the working window = ' + windowHeight);
     document.getElementById('height-id').style.height = windowHeight;
 }
+
 getWindowHeight();
 
 var modalWindow = document.getElementById('my-modal');
@@ -132,7 +133,7 @@ var TEXT_COLOR_TEXT = 'Percentage of time from previous End of the World to the 
 var AUTHOR = document.getElementById('p-author');
 var DESCRIPTION = document.getElementById('p-description');
 
-//when Page is loaded BODY will execute onload function onNextButtonClicked() and will change whichArmaggedon into 0
+//when Page is loaded, BODY will execute onload function onNextButtonClicked() and will change whichArmaggedon into 0
 var whichArmaggedon = -1;
 var chosenArmageddonAuto = armageddons[0];
 var NON_DATE_ARMAGEDDON = false;

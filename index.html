@@ -19,7 +19,6 @@
 </head>
 
 <body onload="onNextButtonClicked()">
-
 	<!-- particles.js container -->
   	<div id="particles-js"></div>
 
@@ -39,7 +38,7 @@
 						</div>
 
 					</div>
-					<p id="progress-meter-p-color">time from previous End of the World to the next</p>
+					<p id="progress-meter-p-color">Percentage of time from previous End of the World to the next : </p>
 				</div>
 
 				<div class="cell shrink">
@@ -48,22 +47,18 @@
 						<p id="p-description"></p>
 					</div>
 					<div id="control-buttons">
-						<a class="button" id="last-button" onclick="onLastButtonClicked()">last Armageddon</a>
-						<a class="button" id="next-button" onclick="onNextButtonClicked()">next Apocalypse</a>
+						<a class="button" id="last-button" onclick="onLastButtonClicked()">prev</a>
+						<a class="button" id="next-button" onclick="onNextButtonClicked()">next</a>
 					</div>
 				</div>
 
 				<div class="cell shrink" style="margin-bottom: 5px">
 					<div class="grid-x grid-margin-x align-justify">
-						<div class="cell shrink">Paul Mospan &copy; 2017</div>
+						<div class="cell shrink">Paul Mospan &copy; 2017 - 2026</div>
 						<div class="cell shrink">
 							<a href="https://github.com/ourendingdays" target="_blank"><i class="fa fa-github" aria-hidden="true" title="My Github Page"></i></a>
 
-							<a href="https://www.facebook.com/paul.mospan" target="_blank" title="My Facebook Page"><i class="fa fa-facebook" aria-hidden="true"></i></a>
-
 							<a title="Contact Me"><i class="fa fa-envelope-o call-modal" aria-hidden="true" id="contact-me"></i></a>
-
-							<a href="#" title="My site (coming soon)"><i class="fa fa-briefcase" aria-hidden="true"></i></a>
 
 							<div id="my-modal" class="modal">
 
@@ -104,9 +99,6 @@
 	<!-- particles.min.js as the local library (no defer to avoid any race with init) -->
 	<script src="js/particles/particles.min.js"></script>
 
-	<!-- initializing particles from JSON + tiny diagnostics -->
-
-
 	<!-- utils script-->
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="js/vendor/jquery.js"></script>
@@ -117,5 +109,4 @@
 	<!-- main JavaScript file -->
 	<script src="js/main.js"></script>
 </body>
-
 </html>
