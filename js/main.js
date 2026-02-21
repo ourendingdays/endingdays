@@ -1,14 +1,3 @@
-/**
- * Main JavaScript file for the Ending Days website.
- *
- * This script initializes the particle background effect, sets up event listeners for the contact form and modal,
- * and manages the countdown timer to the next Armageddon event. It also handles the progress bar that visually 
- * represents the time elapsed between the last and next Armageddon events.
- * @version 1.0
- * @license MIT
- */
-
-
 (function initParticles() {
   const jsonPath = 'assets/particles/particles-stars-hovered.json?v=1';
 
@@ -33,9 +22,7 @@
   });
 })();
 
-/**
- * Initializes the main functionality once the DOM is fully loaded.
- */
+
 jQuery(document).ready(function () {
 	setInitialArmageddon();
 
@@ -108,7 +95,6 @@ function getWindowHeight() {
     console.log('height of the working window = ' + windowHeight);
     document.getElementById('height-id').style.height = windowHeight;
 }
-
 getWindowHeight();
 
 var button = document.getElementById('contact-me');
@@ -122,7 +108,7 @@ var TEXT_COLOR_TEXT = 'Percentage of time from previous End of the World to the 
 var AUTHOR = document.getElementById('p-author');
 var DESCRIPTION = document.getElementById('p-description');
 
-//when Page is loaded, BODY will execute onload function onNextButtonClicked() and will change whichArmaggedon into 0
+//when Page is loaded BODY will execute onload function onNextButtonClicked() and will change whichArmaggedon into 0
 var whichArmaggedon = -1;
 var chosenArmageddonAuto = armageddons[0];
 var NON_DATE_ARMAGEDDON = false;
@@ -188,10 +174,6 @@ function getTimeLeftAuto() {
   DESCRIPTION.textContent = chosenDescriptionAuto[1];
 }
 
-  
-getTimeLeftAuto();
-setInterval(getTimeLeftAuto, 1000);
-
 function timeLeftOutput(leftYear, leftMonth, leftDate, leftHours, leftMinutes, leftSeconds) {
 	var answerTimeLeft = '';
 
@@ -241,6 +223,7 @@ function getProgressTime(prev, next) {
 }
 
 
+  
 /**
  * Activates when the "Next" button is clicked.
  * Increments the global 'whichArmaggedon' variable and updates the current Armageddon event by calling checkArmageddon().
