@@ -31,5 +31,12 @@ function load_env(string $path): void {
     }
 }
 
-// The .env file must in the same directory as this script
-load_env(__DIR__ . '/.env');
+// Prefer root mail.env, fallback to local .env for compatibility
+$rootEnvPath = dirname(__DIR__) . '/mail.env';
+$localEnvPath = __DIR__ . '/.env';
+
+if (file_exists($rootEnvPath)) {
+    load_env($rootEnvPath);
+} else {
+    load_env($localEnvPath);
+}

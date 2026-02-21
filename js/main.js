@@ -28,10 +28,16 @@ jQuery(document).ready(function () {
 	$("#form").submit(function(){
 		$.ajax({
 			type: "POST",
-			url: "mail.php",
+			url: "js/mail.php",
 			data: $(this).serialize()
-		}).done(function(){
-		document.getElementById('greeting').textContent = 'Thank you! I will get in touch with you soon';
+		}).done(function(response){
+			if (response && response.success) {
+				document.getElementById('greeting').textContent = 'Thank you! I will get in touch with you soon';
+			} else {
+				document.getElementById('greeting').textContent = 'Sorry, your message could not be sent. Please try again.';
+			}
+		}).fail(function(){
+			document.getElementById('greeting').textContent = 'Sorry, there was a server error. Please try again later.';
 		});
 		return false;
 	});
