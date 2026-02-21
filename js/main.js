@@ -1,3 +1,14 @@
+/**
+ * Main JavaScript file for the Ending Days website.
+ *
+ * This script initializes the particle background effect, sets up event listeners for the contact form and modal,
+ * and manages the countdown timer to the next Armageddon event. It also handles the progress bar that visually 
+ * represents the time elapsed between the last and next Armageddon events.
+ * @version 1.0
+ * @license MIT
+ */
+
+
 (function initParticles() {
   const jsonPath = 'assets/particles/particles-stars-hovered.json?v=1';
 
@@ -22,26 +33,10 @@
   });
 })();
 
-
+/**
+ * Initializes the main functionality once the DOM is fully loaded.
+ */
 jQuery(document).ready(function () {
-	
-	$("#form").submit(function(){
-		$.ajax({
-			type: "POST",
-			url: "js/mail.php",
-			data: $(this).serialize()
-		}).done(function(response){
-			if (response && response.success) {
-				document.getElementById('greeting').textContent = 'Thank you! I will get in touch with you soon';
-			} else {
-				document.getElementById('greeting').textContent = 'Sorry, your message could not be sent. Please try again.';
-			}
-		}).fail(function(){
-			document.getElementById('greeting').textContent = 'Sorry, there was a server error. Please try again later.';
-		});
-		return false;
-	});
-
 	setInitialArmageddon();
 
 	getTimeLeftAuto();
@@ -116,21 +111,9 @@ function getWindowHeight() {
 
 getWindowHeight();
 
-var modalWindow = document.getElementById('my-modal');
 var button = document.getElementById('contact-me');
 var inline = document.getElementById('close');
 
-button.onclick = function() {
-	modalWindow.style.display = 'block';
-}
-inline.onclick = function() {
-	modalWindow.style.display = 'none';
-}
-window.onclick = function(event) {
-	if(event.target == modalWindow) {
-		modalWindow.style.display = 'none';
-	}
-}
 
 var CLOCK = document.getElementById('clock');
 var PROGRESS = document.getElementById('progress-meter');
@@ -258,7 +241,6 @@ function getProgressTime(prev, next) {
 }
 
 
-  
 /**
  * Activates when the "Next" button is clicked.
  * Increments the global 'whichArmaggedon' variable and updates the current Armageddon event by calling checkArmageddon().
