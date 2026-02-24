@@ -22,12 +22,32 @@
   });
 })();
 
+/**
+ * Sets the height of the grid element to match the client window's height.
+ *
+ * This function retrieves the current height of the document's client area, converts it to a pixel string, 
+ * logs the height for debugging purposes, and then sets the `height` CSS style of the element with the ID 
+ * "height-id" to ensure it spans the entire visible height of the window.
+ *
+ * @returns {void}
+ */
+function getWindowHeight() {
+    var windowHeight = document.documentElement.clientHeight;
+    windowHeight = windowHeight + 'px';
+    console.log('Height of the working window = ' + windowHeight);
+    document.getElementById('height-id').style.height = windowHeight;
+}
 
 jQuery(document).ready(function () {
 	setInitialArmageddon();
 
 	getTimeLeftAuto();
-  	setInterval(getTimeLeftAuto, 1000)
+
+  setInterval(getTimeLeftAuto, 1000);
+
+  getWindowHeight();
+
+  console.log('Document ready, initialized Armageddon counter and particles.');
 });
 
 /**
@@ -41,9 +61,7 @@ function setInitialArmageddon() {
 	for (let i = 0; i < armageddons.length; i++) {
 	  // Determine the Date object for this event
 	  const ev = armageddons[i];
-	  const evDate = (ev instanceof Date)
-		? ev
-		: new Date(ev, 11, 31, 22, 0, 0);
+	  const evDate = (ev instanceof Date) ? ev : new Date(ev, 11, 31, 22, 0, 0);
   
 	  if (today < evDate) {
 		// the next event is at index i
@@ -77,29 +95,7 @@ function setInitialArmageddon() {
 	NON_DATE_ARMAGEDDON = false;
 	LAST_ARMAGEDDON = today;
 	worldEndingCounter(armageddons[0], descriptions[0]);
-  }
-  
-
-/**
- * Sets the height of the grid element to match the client window's height.
- *
- * This function retrieves the current height of the document's client area, converts it to a pixel string, 
- * logs the height for debugging purposes, and then sets the `height` CSS style of the element with the ID 
- * "height-id" to ensure it spans the entire visible height of the window.
- *
- * @returns {void}
- */
-function getWindowHeight() {
-    var windowHeight = document.documentElement.clientHeight;
-    windowHeight = windowHeight + 'px';
-    console.log('height of the working window = ' + windowHeight);
-    document.getElementById('height-id').style.height = windowHeight;
 }
-getWindowHeight();
-
-var button = document.getElementById('contact-me');
-var inline = document.getElementById('close');
-
 
 var CLOCK = document.getElementById('clock');
 var PROGRESS = document.getElementById('progress-meter');
@@ -108,7 +104,6 @@ var TEXT_COLOR_TEXT = 'Percentage of time from previous End of the World to the 
 var AUTHOR = document.getElementById('p-author');
 var DESCRIPTION = document.getElementById('p-description');
 
-//when Page is loaded BODY will execute onload function onNextButtonClicked() and will change whichArmaggedon into 0
 var whichArmaggedon = -1;
 var chosenArmageddonAuto = armageddons[0];
 var NON_DATE_ARMAGEDDON = false;
@@ -221,9 +216,7 @@ function getProgressTime(prev, next) {
   const total   = Math.max(1, end - start);
   return { elapsed, total, progress: elapsed / total };
 }
-
-
-  
+ 
 /**
  * Activates when the "Next" button is clicked.
  * Increments the global 'whichArmaggedon' variable and updates the current Armageddon event by calling checkArmageddon().
@@ -245,7 +238,6 @@ function onLastButtonClicked() {
 	whichArmaggedon--;
 	checkArmageddon(whichArmaggedon);
 }
-
 
 /**
  * Checks and updates the current Armageddon event based on the provided index.
