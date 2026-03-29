@@ -1,7 +1,7 @@
 // ---------------------------------------------------------------------------
 // State — single source of truth
 // ---------------------------------------------------------------------------
-var state = {
+let state = {
     events: [],   // NormalizedEvent[] built once at startup
     index:  0,    // current event index
     timer:  null  // setInterval handle
@@ -10,12 +10,12 @@ var state = {
 // ---------------------------------------------------------------------------
 // Dom manipulations
 // ---------------------------------------------------------------------------
-var CLOCK = document.getElementById('clock');
-var PROGRESS = document.getElementById('progress-meter');
-var TEXT_COLOR = document.getElementById('progress-meter-p-color');
-var TEXT_COLOR_TEXT = 'Percentage of time from previous End of the World to the next : ';
-var AUTHOR = document.getElementById('p-author');
-var DESCRIPTION = document.getElementById('p-description');
+let CLOCK = document.getElementById('clock');
+let PROGRESS = document.getElementById('progress-meter');
+let TEXT_COLOR = document.getElementById('progress-meter-p-color');
+let TEXT_COLOR_TEXT = 'Percentage of time from previous End of the World to the next : ';
+let AUTHOR = document.getElementById('p-author');
+let DESCRIPTION = document.getElementById('p-description');
 
 /**
  * Sets the height of the grid element to match the client window's height.
@@ -27,9 +27,8 @@ var DESCRIPTION = document.getElementById('p-description');
  * @returns {void}
  */
 function getWindowHeight() {
-    var windowHeight = document.documentElement.clientHeight;
+    let windowHeight = document.documentElement.clientHeight;
     windowHeight = windowHeight + 'px';
-    console.log('Height of the working window = ' + windowHeight);
     document.getElementById('height-id').style.height = windowHeight;
 }
 
@@ -63,7 +62,7 @@ jQuery(document).ready(function () {
  * @returns 
  */
 function normalizeEvent(raw, desc) {
-    var date = (raw instanceof Date) ? raw : new Date(raw, 11, 31, 22, 0, 0);
+    let date = (raw instanceof Date) ? raw : new Date(raw, 11, 31, 22, 0, 0);
     return { date: date, year: desc[0], detail: desc[1] };
 }
 
@@ -75,8 +74,8 @@ function normalizeEvent(raw, desc) {
  * @returns {Array} List of normalized events with date, year, and detail.
  */
 function buildEventList(rawEvents, rawDescs) {
-    var result = [];
-    for (var i = 0; i < rawEvents.length; i++) {
+    let result = [];
+    for (let i = 0; i < rawEvents.length; i++) {
         result.push(normalizeEvent(rawEvents[i], rawDescs[i]));
     }
     return result;
@@ -88,17 +87,12 @@ function buildEventList(rawEvents, rawDescs) {
 // ---------------------------------------------------------------------------
 
 function onPrevButtonClicked() {
-    console.log('Previous button clicked. Current index:', state.index, state.events[state.index].year);
     state.index = Math.max(0, state.index - 1);
-    console.log('New index after clicking Previous:', state.index, state.events[state.index].year);
-
     render_doomsday();
 }
 
 function onNextButtonClicked() {
-    console.log('Next button clicked. Current index:', state.index, state.events[state.index].year);
     state.index = Math.min(state.events.length - 1, state.index + 1);
-    console.log('New index after clicking Next:', state.index, state.events[state.index].year);
     render_doomsday();
 }
 
@@ -114,7 +108,7 @@ function onNextButtonClicked() {
  * @returns {number} Index of the initial doomsday event
  */
 function setInitialDoomsday(events, now) {
-    for (var i = 0; i < events.length; i++) {
+    for (let i = 0; i < events.length; i++) {
         if (events[i].date > now) return i;
     }
     return 0;
@@ -126,22 +120,22 @@ function setInitialDoomsday(events, now) {
  * @returns void    
  */
 function render_doomsday() {
-    var event       = state.events[state.index];
-    var now         = new Date();
-    var prevDate    = getPrevDate(state.events, state.index, now);
+    let event       = state.events[state.index];
+    let now         = new Date();
+    let prevDate    = getPrevDate(state.events, state.index, now);
 
-    var timeLeft    = computeTimeLeft(event.date, now);
-    var progress    = computeProgress(prevDate, event.date, now);
-    var progressPer = Math.round(progress * 100);
-    var color       = buildColor(timeLeft.hours, timeLeft.minutes, timeLeft.seconds);
-
-    console.log('Rendering event:', event.year, 'on date:', event.date);
+    let timeLeft    = computeTimeLeft(event.date, now);
+    let progress    = computeProgress(prevDate, event.date, now);
+    let progressPer = Math.round(progress * 100);
+    let color       = buildColor(timeLeft.hours, timeLeft.minutes, timeLeft.seconds);
 
     CLOCK.textContent = timeLeft.days + ' days ' + pad(timeLeft.hours) + ':' + pad(timeLeft.minutes) + ':' + pad(timeLeft.seconds);
     PROGRESS.style.width = progressPer + '%';
     PROGRESS.style.background = color;
 
     TEXT_COLOR.textContent = TEXT_COLOR_TEXT + progressPer + '%';
+    TEXT_COLOR.style.background = color;
+    console.log('Setting text color to:', color);
     TEXT_COLOR.style.color = color;
 
     AUTHOR.textContent = event.year;
@@ -169,7 +163,8 @@ function getPrevDate(events, index, now) {
  * @returns {Object}    Object with properties: days, hours, minutes, seconds
 */
 function computeTimeLeft(target, now) {
-    var diffMs = Math.max(0, target - now);
+    console.log('Computing time left until:', target, 'from now:', now);
+    let diffMs = Math.max(0, target - now);
     return {
         days:    Math.floor(diffMs / (1000 * 60 * 60 * 24)),
         hours:   Math.floor(diffMs / (1000 * 60 * 60)) % 24,
@@ -185,10 +180,10 @@ function computeTimeLeft(target, now) {
  * @returns {number} Progress ratio between 0 and 1
 */
 function computeProgress(prevDate, nextDate, now) {
-    var start   = prevDate.getTime();
-    var end     = nextDate.getTime();
-    var elapsed = now.getTime() - start;
-    var total   = Math.max(1, end - start);  // guard against zero-length range
+    let start   = prevDate.getTime();
+    let end     = nextDate.getTime();
+    let elapsed = now.getTime() - start;
+    let total   = Math.max(1, end - start);  // guard against zero-length range
     return Math.max(0, Math.min(1, elapsed / total));
 }
 
