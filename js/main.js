@@ -1,26 +1,3 @@
-(function initParticles() {
-  const jsonPath = 'assets/particles/particles-stars-hovered.json?v=1';
-
-  // If something initialized earlier, destroy it cleanly.
-  if (window.pJSDom && pJSDom.length) {
-    try { pJSDom[0].pJS.fn.vendors.destroypJS(); } catch (e) { /* noop */ }
-  }
-
-  if (!window.particlesJS) {
-    console.error('particlesJS missing — check js/particles.min.js is loaded before main.js');
-    return;
-  }
-
-  particlesJS.load('particles-js', jsonPath, () => {
-    console.log('callback - particles.js config loaded');
-    // Optional: verify the active config
-    const inst = pJSDom && pJSDom[0] && pJSDom[0].pJS;
-    if (inst) {
-      console.log('shape:', inst.particles.shape.type,
-                  'lines:', inst.particles.line_linked.enable);
-    }
-  });
-})();
 
 /**
  * Sets the height of the grid element to match the client window's height.
@@ -58,9 +35,9 @@ jQuery(document).ready(function () {
 function setInitialArmageddon() {
 	const today = new Date();
   
-	for (let i = 0; i < armageddons.length; i++) {
+	for (let i = 0; i < ARMAGEDDONS.length; i++) {
 	  // Determine the Date object for this event
-	  const ev = armageddons[i];
+	  const ev = ARMAGEDDONS[i];
 	  const evDate = (ev instanceof Date) ? ev : new Date(ev, 11, 31, 22, 0, 0);
   
 	  if (today < evDate) {
@@ -75,7 +52,7 @@ function setInitialArmageddon() {
 		// 3) set LAST_ARMAGEDDON to the previous event's date,
 		//    or fall back to today if there's no previous.
 		if (i > 0) {
-		  const prev = armageddons[i - 1];
+		  const prev = ARMAGEDDONS[i - 1];
 		  LAST_ARMAGEDDON = (prev instanceof Date)
 			? prev
 			: new Date(prev, 11, 31, 22, 0, 0);
@@ -85,7 +62,7 @@ function setInitialArmageddon() {
 		}
   
 		// 4) finally update the UI with the next event
-		worldEndingCounter(ev, descriptions[i]);
+		worldEndingCounter(ev, DESCRIPTIONS[i]);
 		return;
 	  }
 	}
@@ -94,7 +71,7 @@ function setInitialArmageddon() {
 	whichArmaggedon = 0;
 	NON_DATE_ARMAGEDDON = false;
 	LAST_ARMAGEDDON = today;
-	worldEndingCounter(armageddons[0], descriptions[0]);
+	worldEndingCounter(ARMAGEDDONS[0], DESCRIPTIONS[0]);
 }
 
 var CLOCK = document.getElementById('clock');
@@ -105,13 +82,13 @@ var AUTHOR = document.getElementById('p-author');
 var DESCRIPTION = document.getElementById('p-description');
 
 var whichArmaggedon = -1;
-var chosenArmageddonAuto = armageddons[0];
+var chosenArmageddonAuto = ARMAGEDDONS[0];
 var NON_DATE_ARMAGEDDON = false;
 
 //last world ending to make a progress on page load
 var LAST_ARMAGEDDON;
 
-var chosenDescriptionAuto = descriptions[0];
+var chosenDescriptionAuto = DESCRIPTIONS[0];
 
 /**
  * Processes the world ending event by setting the global Armageddon event and its description.
@@ -234,7 +211,7 @@ function onNextButtonClicked() {
  *
  * @returns {void}
  */
-function onLastButtonClicked() {
+function onPrevButtonClicked() {
 	whichArmaggedon--;
 	checkArmageddon(whichArmaggedon);
 }
@@ -243,7 +220,7 @@ function onLastButtonClicked() {
  * Checks and updates the current Armageddon event based on the provided index.
  *
  * This function examines the parameter `number` and determines whether it falls within the valid range of the 
- * pre-defined `armageddons` array. If it exceeds the range or is less than or equal to zero, it resets the index 
+ * pre-defined `ARMAGEDDONS` array. If it exceeds the range or is less than or equal to zero, it resets the index 
  * to 0 and disables the NON_DATE_ARMAGEDDON flag. If the index is greater than 12, NON_DATE_ARMAGEDDON is enabled; 
  * otherwise, it is disabled. Finally, it calls `worldEndingCounter()` with the Armageddon event and its description 
  * corresponding to the globally tracked index `whichArmagedgedon`.
@@ -252,8 +229,8 @@ function onLastButtonClicked() {
  * @returns {void}
  */
 function checkArmageddon(number) {
-    if (number > armageddons.length - 1 || number <= 0) {
-        worldEndingCounter(armageddons[0], descriptions[0]);
+    if (number > ARMAGEDDONS.length - 1 || number <= 0) {
+        worldEndingCounter(ARMAGEDDONS[0], DESCRIPTIONS[0]);
         whichArmaggedon = 0;
         NON_DATE_ARMAGEDDON = false;
     } else if (number > 12) {
@@ -261,5 +238,5 @@ function checkArmageddon(number) {
     } else {
         NON_DATE_ARMAGEDDON = false;
     }
-    worldEndingCounter(armageddons[whichArmaggedon], descriptions[whichArmaggedon]);
+    worldEndingCounter(ARMAGEDDONS[whichArmaggedon], DESCRIPTIONS[whichArmaggedon]);
 }

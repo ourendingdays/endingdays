@@ -6,7 +6,7 @@
  *
  * @type {(Date|number)[]}
  */
-var armageddons = [
+var ARMAGEDDONS = [
     // Events defined as Date objects:
     new Date(2020, 11, 31, 24, 0, 0),
     new Date(2021, 11, 31, 24, 0, 0),
@@ -42,7 +42,7 @@ var armageddons = [
    *
    * @type {string[][]}
    */
-  var descriptions = [
+  var DESCRIPTIONS = [
     [
       '2020',
       'In This year, Jeane Dixon claims, Jesus will return to defeat the unholy trinity of the Antichrist, Satan, and the False prophet between 2020 and 2037.'
