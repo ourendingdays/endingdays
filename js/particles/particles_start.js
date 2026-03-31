@@ -12,7 +12,7 @@
   }
 
   particlesJS.load('particles-js', jsonPath, () => {
-    console.log('callback - particles.js config loaded');
+    console.log('particles.js config loaded');
     // Optional: verify the active config
     const inst = pJSDom && pJSDom[0] && pJSDom[0].pJS;
     if (inst) {

@@ -80,7 +80,7 @@ canvas {
 	line-height: 1em;
 }
 
-#progress-meter-p-color {
+#progress-meter-percentage {
 	color: #ffae00;
 	font-style: italic;
 	font-weight: bold;

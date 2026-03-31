@@ -76,7 +76,7 @@ function setInitialArmageddon() {
 
 var CLOCK = document.getElementById('clock');
 var PROGRESS = document.getElementById('progress-meter');
-var TEXT_COLOR = document.getElementById('progress-meter-p-color');
+var TEXT_COLOR = document.getElementById('progress-meter-percentage');
 var TEXT_COLOR_TEXT = 'Percentage of time from previous End of the World to the next : ';
 var AUTHOR = document.getElementById('p-author');
 var DESCRIPTION = document.getElementById('p-description');
