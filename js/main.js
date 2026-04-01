@@ -40,7 +40,6 @@ jQuery(document).ready(function () {
 
 	state.doomsdays = buildDoomsdayList(ARMAGEDDONS, DESCRIPTIONS);                                              // Populates state variable with normalised data
     [state.previousDoomsdayIndex, state.futureDoomsdayIndex] = setInitialDoomsday(state.doomsdays, new Date());  // Sets nearest previous and nearest future doomsdays from today as an initial indexes
-    console.log('Prev:', state.doomsdays[state.previousDoomsdayIndex], 'Next:', state.doomsdays[state.futureDoomsdayIndex]);
     
     render_doomsday();
 });
@@ -81,8 +80,6 @@ function render_doomsday() {
     let progress        = computeProgressToDoomsday(startDate, endDate, now);
     let progressPer     = Math.round(progress * 100);
     let color           = buildColor(timeLeft.hours, timeLeft.minutes, timeLeft.seconds);
-
-    console.log('Desired', desiredDoomsday.date, 'Prev Doomsday:', startDate, 'Next Doomsday:', endDate);
 
     // UI updates
     (desiredDoomsday.date >= now) ? PROGRESS_PERCENTAGE.textContent = PERCENTAGE_TO_NEXT_TEXT + progressPer + '%'
