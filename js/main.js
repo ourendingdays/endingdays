@@ -1,242 +1,224 @@
+// ---------------------------------------------------------------------------
+// State — single source of truth
+// ---------------------------------------------------------------------------
+let state = {
+    doomsdays              : [],     // NormalizedDoomsdays[] built once at startup in the format { date: Date, year: string, detail: string }
+    desiredDoomsdayIndex   : 0,      // current event index
+    previousDoomsdayIndex  : 0,      // Chosen index of one of the previous doomsdays before today, used for progress calculations
+    futureDoomsdayIndex    : 0,      // Chosen index of one of the future doomsdays after today, used for progress calculations
+};
+
+// ---------------------------------------------------------------------------
+// Dom manipulations
+// ---------------------------------------------------------------------------
+let PERCENTAGE_TO_NEXT_TEXT = 'Time to survive: ';                                  //'Percentage of time from previous End of the World to the next: ';
+let PERCENTAGE_TO_PREV_TEXT = 'Time survived: ';                                    //'Percentage of time from this past End of the World to the next: ';
+let CLOCK                   = document.getElementById('clock');                     // Main countdown display element
+let PROGRESS                = document.getElementById('progress-meter');            // Progress bar element
+let PROGRESS_PERCENTAGE     = document.getElementById('progress-meter-percentage'); // Progress percentage element text
+let AUTHOR                  = document.getElementById('p-author');                  // Author element text
+let DESCRIPTION             = document.getElementById('p-description');             // Description element text
 
 /**
- * Sets the height of the grid element to match the client window's height.
- *
- * This function retrieves the current height of the document's client area, converts it to a pixel string, 
- * logs the height for debugging purposes, and then sets the `height` CSS style of the element with the ID 
- * "height-id" to ensure it spans the entire visible height of the window.
+ * Sets the #height-id of the grid element to match the client window's height. 
+ * This ensures the grid fills the viewport vertically, which is important for the layout and styling of the page.
+ * This function is called on page load to initialize the layout correctly.
+ * 
+ * Note: Do not delete, other than you rewrite the website with a different layout, this is required to make the page look good on different screen sizes.
  *
  * @returns {void}
  */
 function getWindowHeight() {
-    var windowHeight = document.documentElement.clientHeight;
-    windowHeight = windowHeight + 'px';
-    console.log('Height of the working window = ' + windowHeight);
+    let windowHeight = document.documentElement.clientHeight + 'px';
     document.getElementById('height-id').style.height = windowHeight;
 }
 
 jQuery(document).ready(function () {
-	setInitialArmageddon();
+    getWindowHeight();
 
-	getTimeLeftAuto();
+    // Armageddon doomsdays are defined in armageddonData.js as ARMAGEDDONS and DESCRIPTIONS.
 
-  setInterval(getTimeLeftAuto, 1000);
-
-  getWindowHeight();
-
-  console.log('Document ready, initialized Armageddon counter and particles.');
+	state.doomsdays = buildDoomsdayList(ARMAGEDDONS, DESCRIPTIONS);                                              // Populates state variable with normalised data
+    [state.previousDoomsdayIndex, state.futureDoomsdayIndex] = setInitialDoomsday(state.doomsdays, new Date());  // Sets nearest previous and nearest future doomsdays from today as an initial indexes
+    console.log('Prev:', state.doomsdays[state.previousDoomsdayIndex], 'Next:', state.doomsdays[state.futureDoomsdayIndex]);
+    
+    render_doomsday();
 });
 
 /**
- * Picks the next future event and the immediate previous one as LAST_ARMAGEDDON.
- *
- * @returns {void}
+ * Returns the first indexes of the Doomsday doomsdays in the past and future, relative to today; falls back to 0 and 1
+ * @param {Array} doomsdays  
+ * @param {Date} now 
+ * @returns {Array} Indices of the initial doomsdays [previous, future]
  */
-function setInitialArmageddon() {
-	const today = new Date();
-  
-	for (let i = 0; i < ARMAGEDDONS.length; i++) {
-	  // Determine the Date object for this event
-	  const ev = ARMAGEDDONS[i];
-	  const evDate = (ev instanceof Date) ? ev : new Date(ev, 11, 31, 22, 0, 0);
-  
-	  if (today < evDate) {
-		// the next event is at index i
-		
-		// 1) set whichArmaggedon to i
-		whichArmaggedon = i;
-		
-		// 2) set NON_DATE_ARMAGEDDON if ev was a numeric year
-		NON_DATE_ARMAGEDDON = !(ev instanceof Date);
-  
-		// 3) set LAST_ARMAGEDDON to the previous event's date,
-		//    or fall back to today if there's no previous.
-		if (i > 0) {
-		  const prev = ARMAGEDDONS[i - 1];
-		  LAST_ARMAGEDDON = (prev instanceof Date)
-			? prev
-			: new Date(prev, 11, 31, 22, 0, 0);
-		} else {
-		  // no past event, just use today as the baseline
-		  LAST_ARMAGEDDON = today;
-		}
-  
-		// 4) finally update the UI with the next event
-		worldEndingCounter(ev, DESCRIPTIONS[i]);
-		return;
-	  }
-	}
-  
-	// If we get here, there's no future event: fallback
-	whichArmaggedon = 0;
-	NON_DATE_ARMAGEDDON = false;
-	LAST_ARMAGEDDON = today;
-	worldEndingCounter(ARMAGEDDONS[0], DESCRIPTIONS[0]);
-}
-
-var CLOCK = document.getElementById('clock');
-var PROGRESS = document.getElementById('progress-meter');
-var TEXT_COLOR = document.getElementById('progress-meter-percentage');
-var TEXT_COLOR_TEXT = 'Percentage of time from previous End of the World to the next : ';
-var AUTHOR = document.getElementById('p-author');
-var DESCRIPTION = document.getElementById('p-description');
-
-var whichArmaggedon = -1;
-var chosenArmageddonAuto = ARMAGEDDONS[0];
-var NON_DATE_ARMAGEDDON = false;
-
-//last world ending to make a progress on page load
-var LAST_ARMAGEDDON;
-
-var chosenDescriptionAuto = DESCRIPTIONS[0];
-
-/**
- * Processes the world ending event by setting the global Armageddon event and its description.
- *
- * @param {Object} chosenArmageddon - The object representing the chosen Armageddon event.
- * @param {Object} chosenDescription - The object containing the description and details of the event.
- */
-function worldEndingCounter(chosenArmageddon, chosenDescription) {
-	chosenArmageddonAuto = chosenArmageddon;
-	chosenDescriptionAuto = chosenDescription;
-}
-
-//Information about our current armageddon
-var armageddonYear; var armageddonMonth; var armageddonDate;
-var armageddonHours; var armageddonMinutes; var armageddonSeconds0;
-
-/**
- * Automatically counts how much time is left
- */
-function getTimeLeftAuto() {
-  const today = new Date();
-
-  let targetDate;
-  if (NON_DATE_ARMAGEDDON) {
-    targetDate = new Date(chosenArmageddonAuto, 11, 31, 22, 0, 0);
-  } else {
-    targetDate = chosenArmageddonAuto;
-  }
-
-  const diffMs = targetDate - today;
-  const diffSeconds = Math.floor(diffMs / 1000) % 60;
-  const diffMinutes = Math.floor(diffMs / (1000 * 60)) % 60;
-  const diffHours   = Math.floor(diffMs / (1000 * 60 * 60)) % 24;
-  const diffDays    = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-  const formattedHours   = String(diffHours).padStart(2, '0');
-  const formattedMinutes = String(diffMinutes).padStart(2, '0');
-  const formattedSeconds = String(diffSeconds).padStart(2, '0');
-
-  CLOCK.textContent = `${diffDays} days ${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
-
-  // ✅ compute progress correctly
-  const { progress } = getProgressTime(LAST_ARMAGEDDON, targetDate);
-  const progressPercent = Math.max(0, Math.min(100, Math.round(progress * 100)));
-  const progressWidth = progressPercent + '%';
-
-  const colorCurrent = '#' + formattedHours + formattedMinutes + formattedSeconds;
-
-  PROGRESS.style.width = progressWidth;
-  PROGRESS.style.background = colorCurrent;
-  TEXT_COLOR.textContent = TEXT_COLOR_TEXT + progressWidth;
-  TEXT_COLOR.style.color = colorCurrent;
-
-  AUTHOR.textContent = chosenDescriptionAuto[0];
-  DESCRIPTION.textContent = chosenDescriptionAuto[1];
-}
-
-function timeLeftOutput(leftYear, leftMonth, leftDate, leftHours, leftMinutes, leftSeconds) {
-	var answerTimeLeft = '';
-
-	if (leftYear) {
-		answerTimeLeft += leftYear + '/';
-	}
-	if (leftMonth) {
-		answerTimeLeft += '' + leftMonth + '/';
-	}
-	if (leftDate) {
-		answerTimeLeft += '' + leftDate + ' '
-	}
-	if (leftHours) {
-		answerTimeLeft += '' + leftHours + ':'
-	}
-	if (leftMinutes) {
-		answerTimeLeft += '' + leftMinutes + ':'
-	}
-	answerTimeLeft += '' + leftSeconds;
-
-	CLOCK.textContent = answerTimeLeft;
+function setInitialDoomsday(doomsdays, now) {
+    for (let i = 0; i < doomsdays.length; i++) {
+        if (doomsdays[i].date > now) {
+            state.desiredDoomsdayIndex = i;
+            return [i-1, i];
+        }
+    }
+    return [0, 1];
 }
 
 /**
- * 
- * Function for progress-meter. Compares last Armageddon with the one to come and with TODAY
- * 
- * @param {Date} today - The current date.
- * 
- * @returns {string} The Progressbar percentage
+ * Renders the current doomsday event based on state.desiredDoomsdayIndex
+ * Calculates the time in days/hours/minutes/seconds until the event.
+ * Understands whether the event is in the past or future and calculates progress accordingly.
+ * Updates the UI elements with the calculated time left, progress percentage, and event details.
+ * This function is called on page load and whenever the user clicks the "Next" or "Previous" buttons to update the displayed doomsday event.
+ * @returns void    
  */
-function getProgressTime(prev, next) {
-  const prevDate = prev ? new Date(prev.date || prev) : null;
-  const nextDate = next ? new Date(next.date || next) : null;
+function render_doomsday() {
+    // State     : { doomsdays: NormalizedDoomsday[], desiredDoomsdayIndex: number, previousDoomsdayIndex: number, futureDoomsdayIndex: number }
+    // Doomsdays : { date: Date, year: string, detail: string }
+    let desiredDoomsday = state.doomsdays[state.desiredDoomsdayIndex]; // doomsday event to render
+    let now             = new Date();
+    let startDate       = state.doomsdays[state.previousDoomsdayIndex].date;
+    let endDate         = state.doomsdays[state.futureDoomsdayIndex].date; 
+    
+    let timeLeft        = computeTimeLeft(desiredDoomsday.date, now); // { days, hours, minutes, seconds }
+    let progress        = computeProgressToDoomsday(startDate, endDate, now);
+    let progressPer     = Math.round(progress * 100);
+    let color           = buildColor(timeLeft.hours, timeLeft.minutes, timeLeft.seconds);
 
-  if (!prevDate || isNaN(prevDate) || !nextDate || isNaN(nextDate)) {
-    console.warn('getProgressTime: missing/invalid dates', { prev, next });
-    return { elapsed: 0, total: 1, progress: 0 };
-  }
+    console.log('Desired', desiredDoomsday.date, 'Prev Doomsday:', startDate, 'Next Doomsday:', endDate);
 
-  const now = Date.now();
-  const start = prevDate.getTime();
-  const end   = nextDate.getTime();
-  const elapsed = Math.max(0, now - start);
-  const total   = Math.max(1, end - start);
-  return { elapsed, total, progress: elapsed / total };
-}
- 
-/**
- * Activates when the "Next" button is clicked.
- * Increments the global 'whichArmaggedon' variable and updates the current Armageddon event by calling checkArmageddon().
- *
- * @returns {void}
- */
-function onNextButtonClicked() {
-	whichArmaggedon++;
-	checkArmageddon(whichArmaggedon);
+    // UI updates
+    (desiredDoomsday.date >= now) ? PROGRESS_PERCENTAGE.textContent = PERCENTAGE_TO_NEXT_TEXT + progressPer + '%'
+    : PROGRESS_PERCENTAGE.textContent = PERCENTAGE_TO_PREV_TEXT + progressPer + '%';
+
+    CLOCK.textContent           = timeLeft.days + ' days ' + pad(timeLeft.hours) + ':' + pad(timeLeft.minutes) + ':' + pad(timeLeft.seconds);
+    PROGRESS.style.width        = progressPer + '%';
+    PROGRESS.style.background   = color;
+    AUTHOR.textContent          = desiredDoomsday.year;
+    DESCRIPTION.textContent     = desiredDoomsday.detail;
 }
 
+// ---------------------------------------------------------------------------
+// Event handlers for buttons
+// ---------------------------------------------------------------------------
 /**
- * Activates when the "Last" button is clicked.
- * Decrements the global 'whichArmaggedon' variable and updates the current Armageddon event by calling checkArmageddon().
- *
- * @returns {void}
+ * Handles the click event for the "Previous" button.
+ * Updates the state of the previous Doomsday, ensuring that the future index does not go below 0 and that the previous index does not go below 0.
+ * If the new future doomsday index points to a past event, it adjusts both indexes to ensure they point to valid past and future events.
+ * Finally, it calls render_doomsday() to update the UI with the new selected event.
+ * @returns void    
  */
 function onPrevButtonClicked() {
-	whichArmaggedon--;
-	checkArmageddon(whichArmaggedon);
+    state.futureDoomsdayIndex   = Math.max(0, state.futureDoomsdayIndex - 1);
+    state.desiredDoomsdayIndex  = state.futureDoomsdayIndex; // Sync current index with future index after moving back
+    if (state.doomsdays[state.futureDoomsdayIndex].date <  new Date()) {
+        state.futureDoomsdayIndex   = Math.max(0, state.futureDoomsdayIndex + 1);
+        state.previousDoomsdayIndex = Math.max(0, state.previousDoomsdayIndex - 1);
+        state.desiredDoomsdayIndex  = state.previousDoomsdayIndex;
+    } 
+    
+    render_doomsday();
 }
 
 /**
- * Checks and updates the current Armageddon event based on the provided index.
- *
- * This function examines the parameter `number` and determines whether it falls within the valid range of the 
- * pre-defined `ARMAGEDDONS` array. If it exceeds the range or is less than or equal to zero, it resets the index 
- * to 0 and disables the NON_DATE_ARMAGEDDON flag. If the index is greater than 12, NON_DATE_ARMAGEDDON is enabled; 
- * otherwise, it is disabled. Finally, it calls `worldEndingCounter()` with the Armageddon event and its description 
- * corresponding to the globally tracked index `whichArmagedgedon`.
- *
- * @param {number} number - The index representing the selected Armageddon event.
- * @returns {void}
+ * Handles the click event for the "Next" button.
+ * Updates the state of the future Doomsday, ensuring that the future index does not exceed the last index of the doomsdays array.
+ * Syncs the desired doomsday index with the future index after moving forward.
+ * Finally, it calls render_doomsday() to update the UI with the new selected event.
+ * @returns void
  */
-function checkArmageddon(number) {
-    if (number > ARMAGEDDONS.length - 1 || number <= 0) {
-        worldEndingCounter(ARMAGEDDONS[0], DESCRIPTIONS[0]);
-        whichArmaggedon = 0;
-        NON_DATE_ARMAGEDDON = false;
-    } else if (number > 12) {
-        NON_DATE_ARMAGEDDON = true;
+function onNextButtonClicked() {
+    state.futureDoomsdayIndex   = Math.min(state.doomsdays.length - 1, state.futureDoomsdayIndex + 1);
+    state.desiredDoomsdayIndex  = state.futureDoomsdayIndex; // Sync current index with future index after moving forward
+
+    render_doomsday();
+}
+
+// ---------------------------------------------------------------------------
+// Core logic
+// ---------------------------------------------------------------------------
+
+/** 
+ * Computes time left in days, hours, minutes, and seconds until the target date.
+ * Breaks the ms difference into days/hours/minutes/seconds (never negative). 
+ * @param {Date} target Target date/time
+ * @param {Date} now    Current date/time
+ * @returns {Object}    Object with properties: days, hours, minutes, seconds
+*/
+function computeTimeLeft(target, now) {
+    let absoluteMilliseconds = Math.abs(Math.round(target - now));
+
+    return {
+        days:    Math.floor(absoluteMilliseconds / (1000 * 60 * 60 * 24)),
+        hours:   Math.floor(absoluteMilliseconds / (1000 * 60 * 60)) % 24,
+        minutes: Math.floor(absoluteMilliseconds / (1000 * 60)) % 60,
+        seconds: Math.floor(absoluteMilliseconds / 1000) % 60
+    };
+}
+
+/** 
+ * Computes how far `now` lies between `startDate` and `endDate`.
+ * Returns a ratio between 0 and 1:
+ * - 0 means `now` is at or before `startDate`
+ * - 1 means `now` is at or after `endDate`
+ * - values in between represent progress through that interval
+ * @param {Date} startDate  Start date of the interval
+ * @param {Date} endDate    End date of the interval
+ * @param {Date} now        Current date/time
+ * @returns {number} Progress ratio between 0 and 1
+*/
+function computeProgressToDoomsday(startDate, endDate, now) {
+    let start   = startDate.getTime();
+    let end     = endDate.getTime();
+    let current = now.getTime();
+    
+    let elapsed = current - start;
+    let total   = Math.max(1, end - start);
+
+    return Math.max(0, Math.min(1, elapsed / total));
+}
+
+// ---------------------------------------------------------------------------
+// Utils
+// ---------------------------------------------------------------------------
+/**
+ * Each raw entry (Date | number) becomes { date: Date, year: string, detail: string }.
+ * Some numeric years represent far-future doomsdays stored as integers; convert them to Dec 31 22:00 of that year.
+ * @param {string|number|Date} raw 
+ * @param {Array} desc 
+ * @returns {Object} dictionary with keys: date (Date), year (string), detail (string)
+ */
+function normalizeDoomsday(raw, desc) {
+    let date;
+
+    if (raw instanceof Date) {
+        date = raw;
+    } else if (typeof raw === 'number') {
+        date = new Date(raw, 11, 31, 22, 0, 0);
     } else {
-        NON_DATE_ARMAGEDDON = false;
+        date = new Date(raw);
     }
-    worldEndingCounter(ARMAGEDDONS[whichArmaggedon], DESCRIPTIONS[whichArmaggedon]);
+
+    return { date: date, year: desc[0], detail: desc[1] };
+}
+
+/**
+ * Populates the list of normalized doomsdays from the raw data arrays.
+ * @param {Array} rawDoomsdays : List of raw doomsdays, each either a Date or a numeric year.
+ * @param {Array} rawDescs     : List of descriptions corresponding to each doomsday, where each description is an array [year, detail].
+ * @returns {Array} List of normalized doomsdays with date, year, and detail.
+ */
+function buildDoomsdayList(rawDoomsdays, rawDescs) {
+    let result = [];
+    for (let i = 0; i < rawDoomsdays.length; i++) {
+        result.push(normalizeDoomsday(rawDoomsdays[i], rawDescs[i]));
+    }
+    result.sort((a, b) => a.date - b.date);
+    return result;
+}
+
+/** Produces a "#HHMMSS" hex color from the live countdown — keeps the fun trick. */
+function buildColor(h, m, s) {
+    return '#' + pad(h) + pad(m) + pad(s);
+}
+
+function pad(n) {
+    return String(n).padStart(2, '0');
 }
