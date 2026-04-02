@@ -19,6 +19,9 @@ let PROGRESS_PERCENTAGE     = document.getElementById('progress-meter-percentage
 let AUTHOR                  = document.getElementById('p-author');                  // Author element text
 let DESCRIPTION             = document.getElementById('p-description');             // Description element text
 
+let PREV_BUTTON             = document.getElementById('last-button');
+let NEXT_BUTTON             = document.getElementById('next-button');
+
 /**
  * Sets the #height-id of the grid element to match the client window's height. 
  * This ensures the grid fills the viewport vertically, which is important for the layout and styling of the page.
@@ -90,6 +93,8 @@ function render_doomsday() {
     PROGRESS.style.background   = color;
     AUTHOR.textContent          = desiredDoomsday.year;
     DESCRIPTION.textContent     = desiredDoomsday.detail;
+
+    updateNavigationButtons();
 }
 
 // ---------------------------------------------------------------------------
@@ -103,6 +108,9 @@ function render_doomsday() {
  * @returns void    
  */
 function onPrevButtonClicked() {
+    // Prevent moving back if we're already at the earliest event
+    if (state.desiredDoomsdayIndex <= 0) return;
+
     state.futureDoomsdayIndex   = Math.max(0, state.futureDoomsdayIndex - 1);
     state.desiredDoomsdayIndex  = state.futureDoomsdayIndex; // Sync current index with future index after moving back
     if (state.doomsdays[state.futureDoomsdayIndex].date <  new Date()) {
@@ -122,10 +130,25 @@ function onPrevButtonClicked() {
  * @returns void
  */
 function onNextButtonClicked() {
+    // Prevent moving forward if we're already at the latest event
+    if (state.desiredDoomsdayIndex >= state.doomsdays.length - 1) return;
+
     state.futureDoomsdayIndex   = Math.min(state.doomsdays.length - 1, state.futureDoomsdayIndex + 1);
     state.desiredDoomsdayIndex  = state.futureDoomsdayIndex; // Sync current index with future index after moving forward
 
     render_doomsday();
+}
+
+/**
+ * Enables or disables the "Previous" and "Next" buttons based on the current desired doomsday index.
+ * The "Previous" button is disabled if the desired doomsday index is at or below 0, meaning there are no earlier events to navigate to.
+ * The "Next" button is disabled if the desired doomsday index is at or above the last index of the doomsdays array, meaning there are no later events to navigate to.
+ * This function should be called whenever the desired doomsday index changes to ensure the buttons reflect the current navigation state.
+ * @returns void
+ */
+function updateNavigationButtons() {
+    PREV_BUTTON.disabled = (state.desiredDoomsdayIndex === 0);
+    NEXT_BUTTON.disabled = (state.desiredDoomsdayIndex === state.doomsdays.length - 1);
 }
 
 // ---------------------------------------------------------------------------
