@@ -6,6 +6,7 @@ let state = {
     desiredDoomsdayIndex   : 0,      // current event index
     previousDoomsdayIndex  : 0,      // Chosen index of one of the previous doomsdays before today, used for progress calculations
     futureDoomsdayIndex    : 0,      // Chosen index of one of the future doomsdays after today, used for progress calculations
+    timer                  : null    // Timer for the countdown to live updating every second
 };
 
 // ---------------------------------------------------------------------------
@@ -45,6 +46,7 @@ jQuery(document).ready(function () {
     [state.previousDoomsdayIndex, state.futureDoomsdayIndex] = setInitialDoomsday(state.doomsdays, new Date());  // Sets nearest previous and nearest future doomsdays from today as an initial indexes
     
     render_doomsday();
+    startCountdownTimer();
 });
 
 /**
@@ -61,6 +63,17 @@ function setInitialDoomsday(doomsdays, now) {
         }
     }
     return [0, 1];
+}
+
+function startCountdownTimer() {
+    // Prevent multiple intervals from stacking
+    if (state.timer !== null) {
+        clearInterval(state.timer);
+    }
+
+    state.timer = setInterval(function () {
+        render_doomsday();
+    }, 1000);
 }
 
 /**
