@@ -1,0 +1,25 @@
+{
+  "name": "endingdays",
+  "version": "1.0.0",
+  "description": "Do you know when we will all perish? Do you wanna know? Find out when the next Armageddon will be!",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ourendingdays/endingdays.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ourendingdays/endingdays/issues"
+  },
+  "homepage": "https://github.com/ourendingdays/endingdays#readme",
+  "dependencies": {
+    "dotenv": "^17.4.0",
+    "express": "^5.2.1",
+    "mysql2": "^3.20.0"
+  }
+}
