@@ -1,3 +1,4 @@
+// Test script to connect to the database and retrieve data from the doomsdays table
 require("dotenv").config();
 const mysql = require("mysql2/promise");
 

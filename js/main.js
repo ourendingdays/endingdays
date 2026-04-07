@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------
+console.log("main.js file loaded");// ---------------------------------------------------------------------------
 // State — single source of truth
 // ---------------------------------------------------------------------------
 let state = {
@@ -37,16 +37,35 @@ function getWindowHeight() {
     document.getElementById('height-id').style.height = windowHeight;
 }
 
-jQuery(document).ready(function () {
+async function loadDoomsdays() {
+    const response = await fetch("/api/doomsdays");
+
+    if (!response.ok) {
+        throw new Error(`HTTP error ${response.status}`);
+    }
+
+    const rows = await response.json();
+
+    state.doomsdays = rows.map(row => ({
+        date: new Date(row.doomsday_date),
+        year: row.display_year,
+        detail: row.detail
+    }));
+    // Sets nearest previous and nearest future doomsdays from today as an initial indexes
+    [state.previousDoomsdayIndex, state.futureDoomsdayIndex] = setInitialDoomsday(state.doomsdays, new Date());
+}
+
+document.addEventListener("DOMContentLoaded", async function () {
     getWindowHeight();
+    console.log("Loading doomsdays...");
 
-    // Armageddon doomsdays are defined in armageddonData.js as ARMAGEDDONS and DESCRIPTIONS.
-
-	state.doomsdays = buildDoomsdayList(ARMAGEDDONS, DESCRIPTIONS);                                              // Populates state variable with normalised data
-    [state.previousDoomsdayIndex, state.futureDoomsdayIndex] = setInitialDoomsday(state.doomsdays, new Date());  // Sets nearest previous and nearest future doomsdays from today as an initial indexes
-    
-    render_doomsday();
-    startCountdownTimer();
+    try {
+        await loadDoomsdays();
+        render_doomsday();
+        startCountdownTimer();
+    } catch (error) {
+        console.error("Failed to initialize app:", error);
+    }
 });
 
 /**
@@ -85,6 +104,11 @@ function startCountdownTimer() {
  * @returns void    
  */
 function render_doomsday() {
+    // Guard: If there are no doomsdays loaded, do nothing
+    if (!state.doomsdays.length) {
+        return;
+    }
+
     // State     : { doomsdays: NormalizedDoomsday[], desiredDoomsdayIndex: number, previousDoomsdayIndex: number, futureDoomsdayIndex: number }
     // Doomsdays : { date: Date, year: string, detail: string }
     let desiredDoomsday = state.doomsdays[state.desiredDoomsdayIndex]; // doomsday event to render

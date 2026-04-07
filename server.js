@@ -4,6 +4,9 @@ const mysql = require("mysql2/promise");
 
 const app = express();
 
+const path = require("path");
+app.use(express.static(path.join(__dirname, ".")));
+
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
