@@ -1,4 +1,4 @@
-console.log("main.js file loaded");// ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 // State — single source of truth
 // ---------------------------------------------------------------------------
 let state = {
@@ -84,6 +84,12 @@ function setInitialDoomsday(doomsdays, now) {
     return [0, 1];
 }
 
+/**
+ * Starts the countdown timer that updates the displayed time left and progress towards the next doomsday every second.
+ * If a timer is already running, it clears the existing interval to prevent multiple timers from running simultaneously.
+ * This function is called on page load after the doomsdays have been loaded and rendered for the first time.
+ * @returns void
+ */
 function startCountdownTimer() {
     // Prevent multiple intervals from stacking
     if (state.timer !== null) {
@@ -235,42 +241,6 @@ function computeProgressToDoomsday(startDate, endDate, now) {
 // ---------------------------------------------------------------------------
 // Utils
 // ---------------------------------------------------------------------------
-/**
- * Each raw entry (Date | number) becomes { date: Date, year: string, detail: string }.
- * Some numeric years represent far-future doomsdays stored as integers; convert them to Dec 31 22:00 of that year.
- * @param {string|number|Date} raw 
- * @param {Array} desc 
- * @returns {Object} dictionary with keys: date (Date), year (string), detail (string)
- */
-function normalizeDoomsday(raw, desc) {
-    let date;
-
-    if (raw instanceof Date) {
-        date = raw;
-    } else if (typeof raw === 'number') {
-        date = new Date(raw, 11, 31, 22, 0, 0);
-    } else {
-        date = new Date(raw);
-    }
-
-    return { date: date, year: desc[0], detail: desc[1] };
-}
-
-/**
- * Populates the list of normalized doomsdays from the raw data arrays.
- * @param {Array} rawDoomsdays : List of raw doomsdays, each either a Date or a numeric year.
- * @param {Array} rawDescs     : List of descriptions corresponding to each doomsday, where each description is an array [year, detail].
- * @returns {Array} List of normalized doomsdays with date, year, and detail.
- */
-function buildDoomsdayList(rawDoomsdays, rawDescs) {
-    let result = [];
-    for (let i = 0; i < rawDoomsdays.length; i++) {
-        result.push(normalizeDoomsday(rawDoomsdays[i], rawDescs[i]));
-    }
-    result.sort((a, b) => a.date - b.date);
-    return result;
-}
-
 /** Produces a "#HHMMSS" hex color from the live countdown — keeps the fun trick. */
 function buildColor(h, m, s) {
     return '#' + pad(h) + pad(m) + pad(s);
