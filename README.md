@@ -1,5 +1,14 @@
 # ☄️ Our Ending Days
 
+![Node.js](https://img.shields.io/badge/Node.js-18+-green?logo=node.js)
+![Express](https://img.shields.io/badge/Express.js-backend-lightgrey?logo=express)
+![MySQL](https://img.shields.io/badge/MySQL-database-blue?logo=mysql)
+![Status](https://img.shields.io/badge/status-live-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-blue)
+![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red)
+![Maintained](https://img.shields.io/badge/Maintained-yes-green)
+
+
 Do you know when we will all perish? Do you wanna know? Find out when the next Armageddon will be!
 
 > *How much time do we have left… until the next end of the world?*
