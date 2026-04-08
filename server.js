@@ -1,11 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const mysql = require("mysql2/promise");
+const path = require("path");
 
 const app = express();
 
-const path = require("path");
-app.use(express.static(path.join(__dirname, ".")));
+app.use(express.static(path.join(__dirname)));
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -32,6 +32,10 @@ app.get("/api/doomsdays", async (req, res) => {
   }
 });
 
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
 app.listen(Number(process.env.PORT) || 3000, () => {
-  console.log(`Server running on http://localhost:${process.env.PORT || 3000}`);
+  console.log("Server started");
 });
