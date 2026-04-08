@@ -38,7 +38,7 @@ function getWindowHeight() {
 }
 
 async function loadDoomsdays() {
-    const response = await fetch("api/doomsdays");
+    const response = await fetch("/api/doomsdays");
 
     if (!response.ok) {
         throw new Error(`HTTP error ${response.status}`);
@@ -57,7 +57,7 @@ async function loadDoomsdays() {
 
 document.addEventListener("DOMContentLoaded", async function () {
     getWindowHeight();
-    console.log("Loading doomsdays...");
+    console.log("Loading doomsdays from DB...");
 
     try {
         await loadDoomsdays();
