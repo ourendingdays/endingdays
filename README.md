@@ -17,6 +17,12 @@ A full-stack web application that visualizes the time between predicted "end of 
 
 ---
 
+## 🎬 Preview
+
+![Demo](public/assets/demo/ourendingdays.gif)
+
+---
+
 ## 🌐 Live Demo
 
 👉 https://ourendingdays.com
