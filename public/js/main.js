@@ -57,7 +57,7 @@ async function loadDoomsdays() {
 
 document.addEventListener("DOMContentLoaded", async function () {
     getWindowHeight();
-    console.log("Loading doomsdays from DB...");
+    console.log("Every day is a Doomsday! Loading doomsdays and starting countdown timer...");
 
     try {
         await loadDoomsdays();

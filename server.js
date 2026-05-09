@@ -5,6 +5,14 @@ const path = require("path");
 
 const app = express();
 
+// Redirect www to non-www
+app.use((req, res, next) => {
+  if (req.hostname === "www.ourendingdays.com") {
+    return res.redirect(301, "https://ourendingdays.com" + req.url);
+  }
+  next();
+});
+
 app.use(express.static(path.join(__dirname, "public")));
 
 const pool = mysql.createPool({
