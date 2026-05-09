@@ -122,40 +122,6 @@ progress = (now - previous) / (next - previous)
 
 ---
 
-## 🚀 Getting Started (Local)
-
-```bash
-git clone https://github.com/yourusername/ourendingdays.git
-cd endingdays
-npm install
-```
-
-Create `.env`:
-
-```
-DB_HOST=...
-DB_PORT=...
-DB_USER=...
-DB_PASSWORD=...
-DB_NAME=...
-PORT=3000
-```
-
-Run:
-
-```bash
-node server.js
-```
-
----
-
-## ⚠️ Notes
-
-* Large future years (e.g. 22000000000) require special handling (JavaScript Date limits)
-* Designed to be extended with admin features or APIs
-
----
-
 ## 🧠 Future Improvements
 
 * 🛠 Admin panel for adding events
